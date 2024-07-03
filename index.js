@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 const { AxiosError } = require("axios");
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const baseUrl = `/api`
 const weatherApiBaseUrl = `http://api.weatherapi.com/v1`
 
@@ -11,11 +11,10 @@ app.get(`${baseUrl}/hello`, async (req, res) => {
     try {
         const visitorName = req.query?.visitor_name;
         const key = process.env.WEATHER_API_KEY
-        const ipAddress = req.headers['x-forwarded-for'] || req.ip;
         const { data } = await axios.get(`${weatherApiBaseUrl}/current.json`, {
             params: {
                 key,
-                q: ipAddress
+                q: req.headers["x-forwarded-for"]
             }
         })
         const { location: { name } } = data;
